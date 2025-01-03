@@ -1,0 +1,19 @@
+import sys
+from scripts import test
+
+routes = {
+    "test": test.test
+}
+
+def route_request(route):
+    if route in routes:
+        return routes[route]()
+    else:
+        print("올바르지 못한 라우트입니다.")
+
+if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        route = sys.argv[1]
+        print(route_request(route))
+    else:
+        print("라우트를 제공해주세요.")
