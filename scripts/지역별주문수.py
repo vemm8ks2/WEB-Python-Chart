@@ -6,7 +6,6 @@ from mapboxgl.viz import *
 import folium
 from folium import plugins
 import matplotlib.font_manager as fm
-
 from scripts.db_connection import create_connection
 
 fontpath = '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
