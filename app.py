@@ -1,5 +1,5 @@
 import sys
-from scripts import test, 지역별주문수, 결제수단, 유저별주문, 월별주문, 시간대별
+from scripts import test, 지역별주문수, 결제수단, 유저별주문, 월별주문, 시간대별, 인기상품
 
 routes = {
     "test": test.test,
@@ -7,7 +7,8 @@ routes = {
     "결제수단": 결제수단.결제수단,
     "유저별주문": 유저별주문.유저별주문,
     "월별주문": 월별주문.월별주문,
-    "시간대별": 시간대별.시간대별
+    "시간대별": 시간대별.시간대별,
+    "인기상품": 인기상품.인기상품
 }
 
 def route_request(route):
