@@ -1,8 +1,9 @@
 import sys
-from scripts import test
+from scripts import test, 지역별주문수
 
 routes = {
-    "test": test.test
+    "test": test.test,
+    "지역별주문수": 지역별주문수.지역별주문수
 }
 
 def route_request(route):
