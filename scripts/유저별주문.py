@@ -31,9 +31,9 @@ def 유저별주문():
     # 모든 데이터프레임을 하나로 합침
     data = pd.DataFrame(data_frames, columns=['유저 아이디'])
 
-    # 유저별 주문 건수
-    user_order_count = data.groupby('유저 아이디').size()
-
+    # 유저별 주문 건수 (내림차순 정렬)
+    user_order_count = data.groupby('유저 아이디').size().sort_values(ascending=False)
+    
     # 유저별 주문 건수 상위 10개를 원 그래프로 시각화
     top_user_order_count = user_order_count.head(10)
 
@@ -42,10 +42,17 @@ def 유저별주문():
         absolute = round(pct / 100. * sum(allvals))
         return f"{absolute}건\n({pct:.1f}%)"
 
+    # 색상 팔레트
+    colors = ['#FFB3BA', '#FFCCBA', '#FFEB99', '#D9F9B7', '#C2F0C2', '#A8E6CF', '#80C6E1', '#A3B9FF', '#B2A7FF',
+              '#C39BD3']
+
     # 원 그래프 (파이 차트)
     plt.figure(figsize=(8, 8))
-    plt.pie(top_user_order_count, labels=top_user_order_count.index,
-            autopct=lambda pct: func(pct, top_user_order_count), startangle=90)
+    plt.pie(top_user_order_count,
+            labels=top_user_order_count.index,
+            autopct=lambda pct: func(pct, top_user_order_count),
+            startangle=90,
+            colors=colors)
     plt.title('유저별 주문 건수 상위 10명')
 
     # 차트를 메모리 버퍼에 저장 (SVG 형식으로)
