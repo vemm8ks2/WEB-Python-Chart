@@ -1,11 +1,8 @@
 import matplotlib.pyplot as plt
 import io
 import pandas as pd
-import os
 from matplotlib import font_manager
-
 from scripts.db_connection import create_connection
-
 
 def 유저별주문():
     # 한글 폰트를 설정 (예: 맑은 고딕)
@@ -33,7 +30,7 @@ def 유저별주문():
 
     # 유저별 주문 건수 (내림차순 정렬)
     user_order_count = data.groupby('유저 아이디').size().sort_values(ascending=False)
-    
+
     # 유저별 주문 건수 상위 10개를 원 그래프로 시각화
     top_user_order_count = user_order_count.head(10)
 

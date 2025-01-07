@@ -1,5 +1,4 @@
 import os.path
-
 import pandas as pd
 from dotenv import load_dotenv
 from mapboxgl.viz import *
@@ -12,7 +11,6 @@ fontpath = '/usr/share/fonts/truetype/nanum/NanumBarunGothic.ttf'
 font = fm.FontProperties(fname=fontpath, size=9)
 
 load_dotenv()
-
 
 def 지역별주문수():
     # DB 연결

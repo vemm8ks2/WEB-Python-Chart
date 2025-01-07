@@ -1,10 +1,10 @@
-import matplotlib.pyplot as plt
 import io
 import pandas as pd
+import matplotlib.pyplot as plt
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-def 월별주문():
+def 시간대별():
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -12,7 +12,6 @@ def 월별주문():
     # 한글 폰트를 설정
     plt.rcParams['font.family'] = font_prop.get_name()
 
-    # DB 연결
     connection = create_connection()
     connection.start_transaction()
     cursor = connection.cursor()
@@ -24,29 +23,26 @@ def 월별주문():
     data_frames = []
 
     for order in order_list:
-        data_frames.append([order[1]])
+        data_frames.append(order[1])
 
     # 모든 데이터프레임을 하나로 합침
     data = pd.DataFrame(data_frames, columns=['배송일'])
 
     # 배송일을 datetime 형식으로 변환
     data['배송일'] = pd.to_datetime(data['배송일'])
+    # 배송일에서 시간만 추출
+    data['시간대'] = data['배송일'].dt.hour
 
-    # 월별 주문 건수
-    monthly_order_count = data.groupby(data['배송일'].dt.to_period('M')).size()
+    # 시간대별 주문 건수
+    hourly_order_count = data.groupby('시간대').size()
 
-    # 월별 주문 건수 시각화
+    # 시간대별 주문 건수 시각화
     plt.figure(figsize=(12, 6))
-
-    # 막대 차트 그리기
-    monthly_order_count.plot(kind='bar', color='#ff7a36', edgecolor='black', linewidth=1.2)
-
-    # 제목과 축 라벨 설정
-    plt.title('월별 주문 건수', fontsize=16, fontweight='bold', color='#333333')
-    plt.xlabel('날짜', fontsize=14, fontweight='bold', color='#555555')
+    hourly_order_count.plot(kind='bar', color='lightgreen')
+    plt.title('시간대별 주문 건수', fontsize=16, fontweight='bold', color='#333333')
+    plt.xlabel('시간대', fontsize=14, fontweight='bold', color='#555555')
     plt.ylabel('주문 건수', fontsize=14, fontweight='bold', color='#555555')
-    plt.xticks(rotation=45, ha='right', fontsize=12)
-    plt.yticks(fontsize=12)
+    plt.xticks(rotation=45)
     plt.grid(axis='y', linestyle='--', alpha=0.7)
     plt.gca().set_facecolor('#f9f9f9')
     plt.tight_layout()

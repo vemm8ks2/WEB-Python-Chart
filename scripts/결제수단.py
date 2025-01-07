@@ -1,13 +1,8 @@
 import io
 import pandas as pd
-import os
 import matplotlib.pyplot as plt
-from dotenv import load_dotenv
 from matplotlib import font_manager
-
 from scripts.db_connection import create_connection
-
-load_dotenv()
 
 def 결제수단():
     # DB 연결
