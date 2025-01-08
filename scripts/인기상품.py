@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-
 def 인기상품():
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
