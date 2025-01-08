@@ -34,7 +34,7 @@ def 월별매출():
     order_df_monthly['매출'] = order_df_monthly['매출'].astype(int)
 
     # 월별 매출 데이터를 선 그래프로 표시하는 코드
-    plt.figure(figsize=(25, 15))
+    plt.figure(figsize=(25, 8))
     ax = plt.gca()  # 현재 축을 가져옴
 
     # 실제 월별 데이터 시각화
