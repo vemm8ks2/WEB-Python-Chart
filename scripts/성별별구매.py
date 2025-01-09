@@ -50,17 +50,11 @@ def 성별별구매():
     male_data = top_5_products_by_gender[top_5_products_by_gender['성별'] == 'MALE'].copy()
     other_data = top_5_products_by_gender[top_5_products_by_gender['성별'] == 'OTHER'].copy()
 
-    # 데이터를 하나로 합칩니다.
-    combined_data = pd.concat([female_data, male_data, other_data])
-
     # 성별에 맞는 색상 팔레트
     palette = {'FEMALE': '#F9A8D4', 'MALE': '#A7C7E7', 'OTHER': '#C1E1DC'}
 
     # 그래프 크기 설정
     plt.figure(figsize=(15, 10))
-
-    # 각 성별에 대해 다른 오프셋을 주기 위해 y값을 조정 (Female, Male, Other)
-    offset = {'FEMALE': 0, 'MALE': 1, 'OTHER': 2}
 
     # 성별별로 상위 5개 상품을 나란히 표시
     for gender, data in zip(['FEMALE', 'MALE', 'OTHER'], [female_data, male_data, other_data]):

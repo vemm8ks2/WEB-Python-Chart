@@ -46,7 +46,8 @@ def 월별매출예측():
     model_monthly.fit(X_train_monthly, y_train_monthly)
 
     # 예측
-    y_pred_monthly = model_monthly.predict(X_test_monthly)
+    y_test_pred_monthly = model_monthly.predict(X_test_monthly)
+    y_pred_monthly = model_monthly.predict(order_df_by_month[['월']])
 
     # ========================
     # 미래 예측
@@ -59,11 +60,18 @@ def 월별매출예측():
     future_sales_pred = model_monthly.predict(pd.DataFrame(future_months_since, columns=['월']))
 
     future_dates = pd.date_range(order_df_by_month['배송일'].max().start_time, periods=3, freq='ME')
+    future_dates = future_dates + pd.DateOffset(months=1)
 
     df_future = pd.DataFrame({'배송일': future_dates.to_period('M'), '매출액 예측': future_sales_pred})
 
     # 기존 데이터와 미래 예측 데이터 결합
     df_combined = pd.concat([order_df_by_month[['배송일', '결제금액']], df_future], ignore_index=True)
+
+    # 매출액 예측이 NaN인 행들 중 마지막 행 선택
+    last_row = df_combined[df_combined['매출액 예측'].isna()].iloc[-1]
+
+    # 마지막 NaN 행의 '매출액 예측' 값을 채우기 (예측 선이 이어지게 하려는 용도)
+    df_combined.loc[last_row.name, '매출액 예측'] = y_pred_monthly[-1]
 
     # ========================
     # 시각화
@@ -75,13 +83,12 @@ def 월별매출예측():
     ax = plt.gca()  # 현재 축을 가져옴
 
     plt.plot(order_df_by_month['배송일'].astype(str), order_df_by_month['결제금액'], label='실제 매출액')  # 기존 매출액 데이터
-    plt.plot(order_df_by_month['배송일'].astype(str), model_monthly.predict(order_df_by_month[['월']]), label='예측 매출액',
-             linestyle='--')
+    plt.plot(order_df_by_month['배송일'].astype(str), y_pred_monthly, label='예측 매출액', linestyle='--')
     plt.plot(df_combined['배송일'].astype(str), df_combined['매출액 예측'], label='예측 매출액', linestyle='--',
              color='red')  # 미래 예측 매출액 데이터
 
     plt.title(
-        f"월별 매출액 예측\n[ R²(결정계수): {r2_score(y_test_monthly, y_pred_monthly)},  MSE: {mean_squared_error(y_test_monthly, y_pred_monthly)} ]")
+        f"월별 매출액 예측\n[ R²(결정계수): {r2_score(y_test_monthly, y_test_pred_monthly)},  MSE: {mean_squared_error(y_test_monthly, y_test_pred_monthly)} ]")
     plt.xlabel('날짜')
     plt.ylabel('매출액')
 
