@@ -5,14 +5,25 @@ from matplotlib import font_manager
 import seaborn as sns
 from scripts.db_connection import create_connection
 
+def translation(data):
+    if data == 'FEMALE':
+        return '여성'
+    elif data == 'MALE':
+        return '남성'
+    elif data == 'OTHER':
+        return '기타'
+    else:
+        return '알 수 없음'
+
 def 성별별구매():
-    # 한글 폰트를 설정 (예: 맑은 고딕)
+    # 한글 폰트 설정
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
 
-    # 한글 폰트를 설정
+    # 한글 폰트 설정
     plt.rcParams['font.family'] = font_prop.get_name()
 
+    # 데이터 가져오기
     connection = create_connection()
     cursor = connection.cursor()
     cursor.execute(
@@ -34,30 +45,45 @@ def 성별별구매():
     top_5_products_by_gender = grouped_data.sort_values(['성별', '수량'], ascending=[True, False]) \
         .groupby('성별').head(5).reset_index(drop=True)
 
-    # (성별에 따라 구분)
-    palette = {'FEMALE': '#F9A8D4',
-               'MALE': '#A7C7E7',
-               'OTHER': '#C1E1DC'}
+    # 성별별로 상위 5개 상품을 따로 추출
+    female_data = top_5_products_by_gender[top_5_products_by_gender['성별'] == 'FEMALE'].copy()
+    male_data = top_5_products_by_gender[top_5_products_by_gender['성별'] == 'MALE'].copy()
+    other_data = top_5_products_by_gender[top_5_products_by_gender['성별'] == 'OTHER'].copy()
 
-    # 성별별로 상위 5개 상품 시각화
-    plt.figure(figsize=(12, 8))
+    # 데이터를 하나로 합칩니다.
+    combined_data = pd.concat([female_data, male_data, other_data])
 
-    # 상품명과 성별을 나누어 각각 x, y 위치로 설정
-    ax = sns.barplot(x='수량', y='상품명', hue='성별', data=top_5_products_by_gender, palette=palette)
+    # 성별에 맞는 색상 팔레트
+    palette = {'FEMALE': '#F9A8D4', 'MALE': '#A7C7E7', 'OTHER': '#C1E1DC'}
+
+    # 그래프 크기 설정
+    plt.figure(figsize=(15, 10))
+
+    # 각 성별에 대해 다른 오프셋을 주기 위해 y값을 조정 (Female, Male, Other)
+    offset = {'FEMALE': 0, 'MALE': 1, 'OTHER': 2}
+
+    # 성별별로 상위 5개 상품을 나란히 표시
+    for gender, data in zip(['FEMALE', 'MALE', 'OTHER'], [female_data, male_data, other_data]):
+        # 'y' 값에 성별에 맞는 오프셋을 추가하여 표시
+        data['y_offset'] = data['상품명'] + ' (' + translation(gender) + ')'
+
+        sns.barplot(x='수량', y='y_offset', data=data, errorbar=None, label=gender, color=palette[gender])
 
     # 제목, 레이블 설정
     plt.title('성별별로 가장 많이 구매한 상품 Top 5', fontsize=16)
     plt.xlabel('구매 수량', fontsize=12)
     plt.ylabel('상품명', fontsize=12)
 
+    # 범례 추가
+    plt.legend(title="성별", loc='upper left')
+
     # 수치 추가
-    for p in ax.patches:
-        if p.get_width() != 0:
-            x_position = p.get_x() + p.get_width() / 2
-            y_position = p.get_y() + p.get_height() / 2
-            ax.text(x_position, y_position,
-                    f'{int(p.get_width())}',
-                    ha='center', va='center', fontsize=12, color='black')
+    for ax in plt.gca().patches:
+        if ax.get_width() != 0:
+            x_position = ax.get_x() + ax.get_width() / 2
+            y_position = ax.get_y() + ax.get_height() / 2
+            plt.text(x_position, y_position, f'{int(ax.get_width())}', ha='center', va='center', fontsize=12,
+                     color='black')
 
     # 그래프 표시
     plt.tight_layout()
