@@ -17,7 +17,7 @@ def 판매금액():
     plt.rcParams['font.family'] = font_prop.get_name()
 
     # 데이터베이스에서 데이터 가져오기
-    connection = create_connection()
+    connection =create_connection()
     cursor = connection.cursor()
     cursor.execute('SELECT * FROM orders')
 
@@ -41,7 +41,7 @@ def 판매금액():
     def format_with_comma(x):
         return f'{x:,.0f}'
 
-    # 전체 팔린 총 금액 
+    # 전체 팔린 총 금액
     plt.figure(figsize=(12, 6))
 
     # 박스플롯 생성
@@ -53,18 +53,6 @@ def 판매금액():
     box_plot.set_xlabel('전체 판매 금액', fontsize=14)
     box_plot.grid(True, linestyle='--', alpha=0.6)
     box_plot.set_facecolor('whitesmoke')
-
-    # 이상치 색상 
-    for flier in box_plot.collections:  # 이상치 객체에 접근
-        if isinstance(flier, plt.PathCollection):
-            flier.set_edgecolor('green')  # 이상치 테두리 색상 변경
-            flier.set_facecolor('orange')  # 이상치 색상 변경
-
-    # 중앙값 
-    for median in box_plot.lines:
-        if median.get_label() == '_nolegend_':  # 중앙값을 찾아 색상 변경
-            median.set_edgecolor('green')  # 중앙값 색상 변경
-            median.set_linewidth(2)
 
     # 레전드 추가
     legend_labels = [
