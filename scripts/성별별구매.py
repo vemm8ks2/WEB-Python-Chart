@@ -39,8 +39,10 @@ def 성별별구매():
                'MALE': '#A7C7E7',
                'OTHER': '#C1E1DC'}
 
-    # 성별별 상위 5개 상품 시각화
+    # 성별별로 상위 5개 상품 시각화
     plt.figure(figsize=(12, 8))
+
+    # 상품명과 성별을 나누어 각각 x, y 위치로 설정
     ax = sns.barplot(x='수량', y='상품명', hue='성별', data=top_5_products_by_gender, palette=palette)
 
     # 제목, 레이블 설정
@@ -48,6 +50,7 @@ def 성별별구매():
     plt.xlabel('구매 수량', fontsize=12)
     plt.ylabel('상품명', fontsize=12)
 
+    # 수치 추가
     for p in ax.patches:
         if p.get_width() != 0:
             x_position = p.get_x() + p.get_width() / 2
