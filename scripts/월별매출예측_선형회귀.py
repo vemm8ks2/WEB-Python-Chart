@@ -4,7 +4,7 @@ import numpy as np
 import io
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
-from flask.cli import load_dotenv
+from dotenv import load_dotenv
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score

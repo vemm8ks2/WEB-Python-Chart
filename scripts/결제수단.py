@@ -2,7 +2,7 @@ import io
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-from flask.cli import load_dotenv
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
