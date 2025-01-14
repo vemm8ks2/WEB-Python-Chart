@@ -1,11 +1,15 @@
 import io
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
 from matplotlib import font_manager
 import seaborn as sns
 from scripts.db_connection import create_connection
 
-def 여성구매():
+load_dotenv()
+
+def 여성구매(chart=True):
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -33,6 +37,10 @@ def 여성구매():
     grouped_data_male = male_data.groupby(['성별', '상품명'])['수량'].sum().reset_index()
 
     top_10_products_male = grouped_data_male.sort_values(['수량'], ascending=False).head(10).reset_index(drop=True)
+
+    if not chart:
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return top_10_products_male.to_csv(save_folder + "/여성구매.csv", index=False, encoding='utf-8')
 
     # 시각화
     plt.figure(figsize=(12, 8))

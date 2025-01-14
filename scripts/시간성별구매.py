@@ -1,11 +1,14 @@
+import os
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
-import seaborn as sns
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-def 시간성별구매():
+load_dotenv()
+
+def 시간성별구매(chart=True):
     # 한글 폰트를 설정
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -43,6 +46,10 @@ def 시간성별구매():
 
     # NaN 값을 0으로 채우기
     order_grouped = order_grouped.fillna(0)
+
+    if not chart:
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return order_grouped.to_csv(save_folder + "/시간성별구매.csv", index=False, encoding='utf-8')
 
     # 시간별 성별 구매 수량을 누적 막대 그래프로 나타내기
     plt.figure(figsize=(12, 6))

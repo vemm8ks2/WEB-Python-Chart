@@ -1,10 +1,14 @@
 import io
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-def 시간대별():
+load_dotenv()
+
+def 시간대별(chart=True):
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -35,6 +39,12 @@ def 시간대별():
 
     # 시간대별 주문 건수
     hourly_order_count = data.groupby('시간대').size()
+
+    if not chart:
+        hourly_order_count = pd.DataFrame(hourly_order_count)
+        hourly_order_count = hourly_order_count.rename(columns=({0: '주문건수'}))
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return hourly_order_count.to_csv(save_folder + "/시간대별.csv", encoding='utf-8')
 
     # 시간대별 주문 건수 시각화
     plt.figure(figsize=(12, 6))

@@ -1,14 +1,17 @@
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FuncFormatter
 import io
 from scripts.db_connection import create_connection
 
+load_dotenv()
 
-def 판매금액():
+def 판매금액(chart=True):
     # 한글 폰트를 설정
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -36,6 +39,13 @@ def 판매금액():
 
     # 기술 통계 계산
     stats = order_df['총 금액'].describe()
+
+    if not chart:
+        stats = stats.reset_index()
+        stats = stats.rename(columns=({'index':'분포'}))
+
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return stats.to_csv(save_folder + "/판매금액.csv", index=False, encoding='utf-8')
 
     # 천 단위 구분 기호 추가 함수
     def format_with_comma(x):

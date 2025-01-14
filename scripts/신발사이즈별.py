@@ -1,10 +1,14 @@
 import io
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-def 신발사이즈별():
+load_dotenv()
+
+def 신발사이즈별(chart=True):
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -43,6 +47,11 @@ def 신발사이즈별():
 
     # 백분율 구하기
     shoes_total_size = ((shoes / shoes_total) * 100)
+    
+    if not chart:
+        shoes_total_size = shoes_total_size.rename(columns=({'수량':'판매율'}))
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return shoes_total_size.to_csv(save_folder + "/신발사이즈별.csv", encoding='utf-8')
 
     # 새로운 파스텔톤 색상 3개
     new_pastel_colors = [

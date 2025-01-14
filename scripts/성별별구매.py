@@ -1,9 +1,13 @@
 import io
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
 from matplotlib import font_manager
 import seaborn as sns
 from scripts.db_connection import create_connection
+
+load_dotenv()
 
 def translation(data):
     if data == 'FEMALE':
@@ -15,7 +19,7 @@ def translation(data):
     else:
         return '알 수 없음'
 
-def 성별별구매():
+def 성별별구매(chart=True):
     # 한글 폰트 설정
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -44,6 +48,10 @@ def 성별별구매():
     # 성별별로 가장 많이 구매한 상품 상위 5개씩 추출
     top_5_products_by_gender = grouped_data.sort_values(['성별', '수량'], ascending=[True, False]) \
         .groupby('성별').head(5).reset_index(drop=True)
+    
+    if not chart:
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return top_5_products_by_gender.to_csv(save_folder + "/성별별구매.csv", index=False, encoding='utf-8')
 
     # 성별별로 상위 5개 상품을 따로 추출
     female_data = top_5_products_by_gender[top_5_products_by_gender['성별'] == 'FEMALE'].copy()

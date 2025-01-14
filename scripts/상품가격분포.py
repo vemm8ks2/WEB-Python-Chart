@@ -1,14 +1,17 @@
+import os
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
 import seaborn as sns
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from matplotlib.lines import Line2D
 from matplotlib.ticker import FuncFormatter
 from scripts.db_connection import create_connection
 
+load_dotenv()
 
-def 상품가격분포():
+def 상품가격분포(chart=True):
     # 한글 폰트를 설정
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -33,6 +36,13 @@ def 상품가격분포():
 
     # 기술 통계 계산
     stats = order_df['가격'].describe()
+    
+    if not chart:
+        stats = stats.reset_index()
+        stats = stats.rename(columns=({'index':'분포'}))
+
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return stats.to_csv(save_folder + "/상품가격분포.csv", index=False, encoding='utf-8')
 
     # 상품 가격 박스플롯
     plt.figure(figsize=(12, 6))

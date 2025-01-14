@@ -1,11 +1,14 @@
 import pandas as pd
 import io
+import os
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
+load_dotenv()
 
-def 카테고리성별구매():
+def 카테고리성별구매(chart=True):
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -33,6 +36,10 @@ def 카테고리성별구매():
 
     # 성별과 카테고리별로 수량을 집계
     category_gender_sales = order_df.groupby(['카테고리', '성별'])['수량'].sum().unstack(fill_value=0)
+
+    if not chart:
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return category_gender_sales.to_csv(save_folder + "/카테고리성별구매.csv", encoding='utf-8')
 
     # 성별별 색상 지정 (보기 좋은 색상)
     color_map = {

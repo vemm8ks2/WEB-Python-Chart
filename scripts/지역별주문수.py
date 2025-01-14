@@ -12,7 +12,7 @@ font = fm.FontProperties(fname=fontpath, size=9)
 
 load_dotenv()
 
-def 지역별주문수():
+def 지역별주문수(chart=True):
     # DB 연결
     connection = create_connection()
     connection.start_transaction()
@@ -59,6 +59,12 @@ def 지역별주문수():
 
     # 지도 불러들어오기 중심점 좌표 서울
     m = folium.Map(location=[35.8, 127.6], tiles="OpenStreetMap", zoom_start=8)
+
+    if not chart:
+        df_pop = df_pop[['region','pop']]
+        df_pop = df_pop.rename(columns=({'region':'지역', 'pop':'주문 수'}))
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return df_pop.to_csv(save_folder + "/지역별주문수.csv", index=False, encoding='utf-8')
 
     # 지도에 색 적용 및 데이터 연결
     choropleth = folium.Choropleth(

@@ -1,10 +1,14 @@
 import io
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-def 인기상품():
+load_dotenv()
+
+def 인기상품(chart=True):
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -34,6 +38,10 @@ def 인기상품():
 
     # 내림차순으로 정렬 후 상위 10개 상품 선택
     top_10_products = popular_products.head(10)
+
+    if not chart:
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return top_10_products.to_csv(save_folder + "/인기상품.csv", encoding='utf-8')
 
     # 수평 롤리팝 차트로 시각화
     plt.figure(figsize=(10, 8))

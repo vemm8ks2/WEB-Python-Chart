@@ -1,10 +1,14 @@
 import io
+import os
 import pandas as pd
 import matplotlib.pyplot as plt
+from flask.cli import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-def 결제수단():
+load_dotenv()
+
+def 결제수단(chart=True):
     # DB 연결
     connection = create_connection()
     connection.start_transaction()
@@ -28,6 +32,12 @@ def 결제수단():
 
     # 결제 수단별 주문 건수
     payment_method_count = data['결제 수단'].value_counts()
+
+    if not chart:
+        payment_method_count = pd.DataFrame(payment_method_count)
+        payment_method_count = payment_method_count.rename(columns=({'count':'결제횟수'}))
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return payment_method_count.to_csv(save_folder + "/결제수단.csv", encoding='utf-8')
 
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우

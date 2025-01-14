@@ -1,15 +1,19 @@
+import os
 import pandas as pd
 import numpy as np
 import io
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from flask.cli import load_dotenv
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error, r2_score
 from matplotlib import rcParams
 from scripts.db_connection import create_connection
 
-def 월별매출예측():
+load_dotenv()
+
+def 월별매출예측_선형회귀(chart=True):
     connection = create_connection()
     cursor = connection.cursor()
     cursor.execute("SELECT * FROM orders")
@@ -77,6 +81,10 @@ def 월별매출예측():
     # 시각화
     # ========================
     rcParams['font.family'] = 'Malgun Gothic'  # 윈도우에서 기본적으로 제공되는 한글 글꼴
+
+    if not chart:
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return df_combined.to_csv(save_folder + "/월별매출예측_선형회귀.csv", index=False, encoding='utf-8')
 
     # 월별 예측 그래프
     plt.figure(figsize=(20, 7))

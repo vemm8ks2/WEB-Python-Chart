@@ -1,12 +1,16 @@
 import pandas as pd
 import io
+import os
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from dotenv import load_dotenv
 from matplotlib import rcParams
 from statsmodels.tsa.arima.model import ARIMA
 from scripts.db_connection import create_connection
 
-def 월별결제예측():
+load_dotenv()
+
+def 월별매출예측_ARIMA(chart=True):
     rcParams['font.family'] = 'Malgun Gothic'  # 윈도우에서 기본적으로 제공되는 한글 글꼴
 
     connection = create_connection()
@@ -33,6 +37,14 @@ def 월별결제예측():
 
     forecast = model_fit.forecast(steps=6)
     future_dates = pd.date_range(order_df_monthly['월별'].max(), periods=7, freq='ME')[1:]
+
+    if not chart:
+        data = pd.DataFrame({'월별':future_dates, '매출액 예측':forecast})
+        # 기존 데이터와 미래 예측 데이터 결합
+        df_combined = pd.concat([order_df_monthly[['월별', '결제금액']], data], ignore_index=True)
+
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return df_combined.to_csv(save_folder + "/월별매출예측_ARIMA.csv", index=False, encoding='utf-8')
 
     # 시각화
     plt.figure(figsize=(10, 6))

@@ -1,10 +1,14 @@
 import matplotlib.pyplot as plt
+import os
 import io
 import pandas as pd
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-def 월별주문():
+load_dotenv()
+
+def 월별주문(chart=True):
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -34,6 +38,12 @@ def 월별주문():
 
     # 월별 주문 건수
     monthly_order_count = data.groupby(data['배송일'].dt.to_period('M')).size()
+
+    if not chart:
+        monthly_order_count = pd.DataFrame(monthly_order_count)
+        monthly_order_count = monthly_order_count.rename(columns=({0: '주문건수'}))
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return monthly_order_count.to_csv(save_folder + "/월별주문.csv", encoding='utf-8')
 
     # 월별 주문 건수 시각화
     plt.figure(figsize=(12, 6))

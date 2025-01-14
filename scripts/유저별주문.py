@@ -1,10 +1,14 @@
 import matplotlib.pyplot as plt
 import io
+import os
 import pandas as pd
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
-def 유저별주문():
+load_dotenv()
+
+def 유저별주문(chart=True):
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -33,6 +37,12 @@ def 유저별주문():
 
     # 유저별 주문 건수 상위 10개를 원 그래프로 시각화
     top_user_order_count = user_order_count.head(10)
+
+    if not chart:
+        top_user_order_count = pd.DataFrame(top_user_order_count)
+        top_user_order_count = top_user_order_count.rename(columns=({0: '주문건수'}))
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return top_user_order_count.to_csv(save_folder + "/유저별주문.csv", encoding='utf-8')
 
     # 퍼센트와 주문 건수를 표시하는 함수 정의
     def func(pct, allvals):

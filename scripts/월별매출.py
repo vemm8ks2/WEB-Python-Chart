@@ -1,12 +1,17 @@
 import pandas as pd
 import io
+import os
 import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
+from dotenv import load_dotenv
 from matplotlib import font_manager
 from scripts.db_connection import create_connection
 
 
-def 월별매출():
+load_dotenv()
+
+
+def 월별매출(chart=True):
     # 한글 폰트를 설정 (예: 맑은 고딕)
     font_path = 'C:\\Windows\\Fonts\\malgun.ttf'  # 윈도우의 경우
     font_prop = font_manager.FontProperties(fname=font_path)
@@ -32,6 +37,10 @@ def 월별매출():
     order_df_monthly = order_df.groupby('월별')['매출'].sum().reset_index()
     order_df_monthly['월별'] = order_df_monthly['월별'].astype(str)
     order_df_monthly['매출'] = order_df_monthly['매출'].astype(int)
+
+    if not chart:
+        save_folder = os.getenv("REPORT_PREPROCESS_PWD")
+        return order_df_monthly.to_csv(save_folder + "/월별매출.csv", index=False, encoding='utf-8')
 
     # 월별 매출 데이터를 선 그래프로 표시하는 코드
     plt.figure(figsize=(25, 8))
